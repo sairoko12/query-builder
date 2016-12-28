@@ -1,0 +1,31 @@
+{
+	"name": "sairoko/query-builder",
+	"description": "Fast SQL builder with PDO",
+	"homepage": "https://github.com/sairoko12/query-builder",
+	"keywords": [
+	    "query builder",
+	    "sql",
+	    "database",
+	    "mysql",
+	    "postgresql",
+	    "sqlite",
+	    "PDO"
+	],
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"authors": [
+	    {
+	      "name": "Cristian Benavides",
+	      "email": "sairoko16@gmail.com",
+	      "role": "Developer"
+	    }	
+	],
+	"require": {
+	    "php": ">=5.4.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Sairoko\\": "src/"
+		}
+	}
+}
