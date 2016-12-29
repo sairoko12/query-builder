@@ -13,7 +13,7 @@ class Connection
 	public function __construct(array $params)
 	{
 		try {
-			$this->db = new PDO($params['driver'] . ":host=" . $params["db_host"] . ";port=" . $params["db_port"] . ";dbname=" . $params["database"], $params["db_user"], $params["db_pass"]);
+			$this->db = new PDO($params['driver'] . ":host=" . $params["host"] . ";port=" . $params["port"] . ";dbname=" . $params["database"], $params["user"], $params["password"]);
 		} catch (PDOException  $e) {
 			echo "Message: " . $e->getMessage();
 			exit(0);

@@ -15,6 +15,7 @@ class QB extends Connection
     private $from;
     private $where_string;
     private $limit;
+    private $offset;
     private $orderBy;
     private $sortBy;
     private $groupBy;
@@ -94,17 +95,6 @@ class QB extends Connection
             $this->joins['right'][] = "RIGHT JOIN " . $table[key($table)] . " AS " . key($table) . " ON " . $condition;
         } else {
             $this->joins['right'][] = "RIGHT JOIN " . $table . " ON " . $condition;
-        }
-
-        return $this;
-    }
-
-    public function fullJoin($table = array(), $condition = '')
-    {
-        if (is_array($tables)) {
-            $this->joins['full'][] = "FULL JOIN " . $table[key($table)] . " AS " . key($table) . " ON " . $condition;
-        } else {
-            $this->joins['full'][] = "FULL JOIN " . $table . " ON " . $condition;
         }
 
         return $this;
@@ -253,6 +243,16 @@ class QB extends Connection
         return $this;
     }
 
+    public function offset($offset)
+    {
+        if (empty($this->limit)) {
+            return false;
+        }
+        
+        $this->offset = $offset;
+        return $this;
+    }
+
     public function orderBy($camp, $order)
     {
         $this->orderBy = $camp;
@@ -286,7 +286,14 @@ class QB extends Connection
 
     public function insertQuery($table, $data = array())
     {
-        return "INSERT INTO {$table}(" . implode(',', array_keys($data)) . ") VALUES(" . implode(',', array_map(function($value) {
+        if (!empty($table) && !empty($this->from) && is_array($table)) {
+            $_table = $this->from;
+            $data = $table;
+        } else {
+            $_table = $table;
+        }
+
+        return "INSERT INTO {$_table}(" . implode(',', array_keys($data)) . ") VALUES(" . implode(',', array_map(function($value) {
                                 return (is_numeric($value)) ? "{$value}" : "'{$value}'";
                         }, $data)) . ");";
     }
@@ -371,7 +378,7 @@ class QB extends Connection
         return $r;
     }
 
-    public function update($table, $data, $condition = '')
+    public function update($table, $data = array(), $condition = '')
     {
         $query = $this->updateQuery($table, $data, $condition = '');
 
@@ -389,17 +396,24 @@ class QB extends Connection
     }
 
 
-    public function updateQuery($table, $data, $condition = '')
+    public function updateQuery($table, $data = array(), $condition = '')
     {
-        $query = "UPDATE {$table} SET " . implode(',', $this->array_map_assoc(function($k, $v) {
+        if (!empty($table) && !empty($this->from) && is_array($table)) {
+            $_table = $this->from;
+            $data = $table;
+        } else {
+            $_table = $table;
+        }
+
+        $query = "UPDATE {$_table} SET " . implode(',', $this->array_map_assoc(function($k, $v) {
                             return (is_numeric($v)) ? "{$k} = {$v}" : "{$k} = '{$v}'";
-                        }, $data)) . " ";
+                        }, $data));
 
         if ($condition !== '') {
             if (is_string($condition)) {
-                $query .= "WHERE " . $condition;
+                $query .= " WHERE " . $condition;
             } elseif(is_array($condition)) {
-                $query .= "WHERE " . implode(' AND ', $this->array_map_assoc(function($k, $v){
+                $query .= " WHERE " . implode(' AND ', $this->array_map_assoc(function($k, $v){
                     return (is_numeric($v)) ? "{$k} = {$v}" : "{$k} = '{$v}'";
                 }, $condition));
             }
@@ -416,7 +430,7 @@ class QB extends Connection
         return $query;
     }
 
-    public function delete($table, $condition = false)
+    public function delete($table = null, $condition = false)
     {
         $query = $this->deleteQuery($table, $condition);
 
@@ -431,8 +445,14 @@ class QB extends Connection
         }
     }
 
-    public function deleteQuery($table, $condition = false)
+    public function deleteQuery($table = null, $condition = false)
     {
+        if (empty($table) && !empty($this->from)) {
+            $table = $this->from;
+        } else {
+            return false;
+        }
+
         $query = "DELETE FROM {$table}";
 
         if (false !== $condition) {
@@ -441,16 +461,16 @@ class QB extends Connection
                             return (is_numeric($v)) ? "{$k} = {$v}" : "{$k} = '{$v}'";
                         }, $condition)) . ";";
             } elseif(is_string($condition)) {
-                $query .= " WHERE {$condition}";
+                $query .= " WHERE {$condition};";
             }
         } else {
             $this->whereAssemble();
             if (!empty($this->where_string)) {
-                $query .= " " . $this->where_string;
+                $query .= " " . $this->where_string . "";
                 $this->clearWhere();
-            } else {
-                $query .= ";";
             }
+
+            $query .= ";";
         }
 
         return $query;
@@ -508,9 +528,8 @@ class QB extends Connection
 
         $query = "SELECT " . $this->camps . " FROM " . $this->from;
 
-        //Juntamos JOINS
         if ($this->validJoins()) {
-            foreach ($this->joins AS $key => $value) {
+            foreach ($this->joins AS $type => $value) {
                 if (count($value)) {
                     for ($i = 0; $i < count($value); $i++) {
                         $query .= ' ' . $value[$i];
@@ -522,19 +541,20 @@ class QB extends Connection
         $this->whereAssemble();
         $query .= $this->where_string;
 
-        //Agregamos groupBy
         if (strlen($this->groupBy) > 0) {
             $query .= " GROUP BY {$this->groupBy}";
         }
 
-        //Agregamos orderBy
         if (!empty($this->orderBy) && !empty($this->sortBy)) {
             $query .= " ORDER BY {$this->orderBy} {$this->sortBy}";
         }
 
-        //Agregamos limit
         if (!empty($this->limit) && is_numeric($this->limit) && intval($this->limit) > 0) {
             $query .= " LIMIT {$this->limit}";
+        }
+
+        if (!empty($this->offset) && is_numeric($this->offset) && intval($this->offset) > 0) {
+            $query .= " OFFSET {$this->limit}";
         }
 
         $query .= ";";        
