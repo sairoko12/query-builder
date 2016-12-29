@@ -18,11 +18,21 @@ Simple and fast query builder, no more queries strings in your code
 
 ### Installation
 
-`composer install sairoko/query-builder`
+```bash
+composer install sairoko/query-builder
+```
 
 ##### Or add dependency in *`composer.json`* file
 
-`"sairoko/query-builder": "1.0"`
+```js
+{
+	...
+	"require": {
+		"sairoko/query-builder": "1.0"
+	},
+	...
+}
+```
 
 
 ### *SELECT* Example
@@ -325,6 +335,7 @@ echo $sql;
 ### *CALL PROCEDURE* Example
 
 This method use for complete PDO resources
+
 More info visit [PDO documentation](http://php.net/manual/en/pdo.prepared-statements.php#pdo.prepared-statements)
 
 ```PHP
@@ -337,6 +348,17 @@ $status = $database->call('procedure_name', [1, 2]);
 
 $result = $database->call('sp_test', ['foo', 'bar'], true);
 // Fetch rows result
+```
+
+### *Transaction* Example
+
+```php
+// Instance
+$database = new \Sairoko\QB($config);
+
+$database->transaction(function($q){
+	$q->table('tablename')->insert(['field1' => 'foo']);
+});
 ```
 
 ### Get PDO instance
