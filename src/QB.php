@@ -740,7 +740,6 @@ class QB extends Connection
         return call_user_func_array([$this, 'from'], func_get_args());
     }
 
-    //Fetch methods
     public function all($fields = array(), $to = self::MODE_OBJECT)
     {
         if (!empty($fields)) {
@@ -754,6 +753,12 @@ class QB extends Connection
         }
 
         $obj = $this->db()->query($sql);
+
+        $error = $this->db()->errorInfo();
+        
+        if (!empty($error) && $error[0] !== '00000' && !empty($error[2])) {
+            throw new Exception("SQLSTATE[{$error[0]}]: {$error[2]}", 500);
+        }
 
         if (is_object($obj)) {
             if (1 === $to) {
@@ -795,6 +800,12 @@ class QB extends Connection
         }
 
         $obj = $this->db()->query($sql);
+
+        $error = $this->db()->errorInfo();
+        
+        if (!empty($error) && $error[0] !== '00000' && !empty($error[2])) {
+            throw new Exception("SQLSTATE[{$error[0]}]: {$error[2]}", 500);
+        }
 
         if (is_object($obj)) {
             if (1 === $to) {
