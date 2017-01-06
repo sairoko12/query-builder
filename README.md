@@ -28,7 +28,7 @@ composer install sairoko/query-builder
 {
 	...
 	"require": {
-		"sairoko/query-builder": "1.0"
+		"sairoko/query-builder": "1.1"
 	},
 	...
 }
