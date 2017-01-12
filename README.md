@@ -1,19 +1,19 @@
 # Query builder
-Simple and fast query builder, no more queries strings in your code
+Simple and fast query builder, no more query strings in your code
 
 ## Features
-- Implement [PDO](http://php.net/manual/en/book.pdo.php)
+- [PDO](http://php.net/manual/en/book.pdo.php) support
 - Simple fetch result
 - Easy usage
 - Easy installation via composer
-- Support SQL transaction
-- Support Stored Procedures
-- Support alias for tables
+- SQL transaction support
+- Stored Procedures support
+- Table Alias support
 - Super **where** method **_:\\/_**
 
 ## Future features
-- Evit autocommit in transaction
-- Support subqueries in joins methods
+- Avoid auto commit within transaction
+- Subqueries support between joins
 - **_Put your features here_** ;)
 
 ### Installation
@@ -37,7 +37,7 @@ composer install sairoko/query-builder
 
 ### *SELECT* Example
 
-The method `assemble` always returned your current *select* SQL string
+The assembly's method always returns your current SQL string query
 
 ```PHP
 // Set database connection
