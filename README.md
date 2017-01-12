@@ -19,7 +19,7 @@ Simple and fast query builder, no more query strings in your code
 ### Installation
 
 ```bash
-composer install sairoko/query-builder
+composer install sairoko/query-builder 1.1
 ```
 
 ##### Or add dependency in *`composer.json`* file
@@ -28,7 +28,7 @@ composer install sairoko/query-builder
 {
 	...
 	"require": {
-		"sairoko/query-builder": "1.0"
+		"sairoko/query-builder": "1.1"
 	},
 	...
 }
