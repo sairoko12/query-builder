@@ -19,7 +19,7 @@ Simple and fast query builder, no more query strings in your code
 ### Installation
 
 ```bash
-composer require sairoko/query-builder 1.1
+composer require sairoko/query-builder "1.*"
 ```
 
 ##### Or add dependency in *`composer.json`* file
@@ -28,7 +28,7 @@ composer require sairoko/query-builder 1.1
 {
 	...
 	"require": {
-		"sairoko/query-builder": "1.1"
+		"sairoko/query-builder": "1.*"
 	},
 	...
 }
@@ -49,7 +49,7 @@ $config = array(
 	'port' => '3306',
 	'database' => 'DATABASENAME',
 	'user' => 'root',
-	'root' => 'root'
+	'password' => 'root'
 );
 
 $database = new \Sairoko\QB($config);
